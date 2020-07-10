@@ -281,13 +281,12 @@ info:
     name: Niklas Walter
     url: 'https://github.com/TwoStone/bitbucket-server-api'
 servers:
-  - url: 'https://example.com/'
+  - url: https://example.com
     description: ''
 paths:
   /rest/api/1.0/projects:
     get:
       summary: REST resource for working with projects
-      tags: []
       responses:
         '200':
           description: OK
@@ -302,8 +301,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-              examples:
-                example-1: {}
       operationId: getProjects
       description: |-
         Retrieve a page of projects.
@@ -331,7 +328,6 @@ paths:
   '/rest/api/1.0/projects/{projectKey}':
     get:
       summary: REST resource for working with projects
-      tags: []
       responses:
         '200':
           description: OK
@@ -694,5 +690,6 @@ components:
     usernamePassword:
       type: http
       scheme: basic
+      description: ''
 security:
   - credentials: []
