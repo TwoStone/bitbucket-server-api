@@ -3,46 +3,52 @@ info:
   title: bitbucket-server-api
   version: 7.3.1
   description: |-
-    <h1>REST Resources Provided By: Bitbucket Server - REST</h1><p>
+    <h1>REST Resources Provided By: Bitbucket Server - REST</h1>
+    <p>
         This is the reference document for the Atlassian Bitbucket REST API. The REST API is for developers who want to:
-        </p><ul>
-    <li>integrate Bitbucket with other applications;</li>
-    <li>create scripts that interact with Bitbucket; or</li>
-    <li>develop plugins that enhance the Bitbucket UI, using REST to interact with the backend.</li>
+    </p>
+    <ul>
+        <li>integrate Bitbucket with other applications;</li>
+        <li>create scripts that interact with Bitbucket; or</li>
+        <li>develop plugins that enhance the Bitbucket UI, using REST to interact with the backend.</li>
     </ul>
-        You can read more about developing Bitbucket plugins in the
-        <a href="https://developer.atlassian.com/server/bitbucket/">Bitbucket Developer Documentation</a>.
+    You can read more about developing Bitbucket plugins in the
+    <a href="https://developer.atlassian.com/server/bitbucket/">Bitbucket Developer Documentation</a>.
     <p></p>
     <h2 id="gettingstarted">Getting started</h2>
     <p>
         Because the REST API is based on open standards, you can use any web development language or command line tool
         capable of generating an HTTP request to access the API. See the
-        <a href="https://developer.atlassian.com/server/bitbucket/reference/rest-api/">developer documentation</a> for a basic
+        <a href="https://developer.atlassian.com/server/bitbucket/reference/rest-api/">developer documentation</a> for a
+        basic
         usage example.
     </p>
     <p>
         If you're already working with the
         <a href="https://developer.atlassian.com/server/framework/atlassian-sdk/">Atlassian SDK</a>,
         the <a href="https://developer.atlassian.com/server/framework/atlassian-sdk/using-the-rest-api-browser/">REST API
-        Browser</a> is a great tool for exploring and experimenting with the Bitbucket REST API.
+            Browser</a> is a great tool for exploring and experimenting with the Bitbucket REST API.
     </p>
     <h2>
-    <a name="StructureoftheRESTURIs"></a>Structure of the REST URIs</h2>
+        <a name="StructureoftheRESTURIs"></a>Structure of the REST URIs</h2>
     <p>
-    Bitbucket's REST APIs provide access to resources (data entities) via URI paths. To use a REST API, your application will
-    make an HTTP request and parse the response. The Bitbucket REST API uses JSON as its communication format, and the standard
-    HTTP methods like GET, PUT, POST and DELETE. URIs for Bitbucket's REST API resource have the following structure:
+        Bitbucket's REST APIs provide access to resources (data entities) via URI paths. To use a REST API, your application
+        will
+        make an HTTP request and parse the response. The Bitbucket REST API uses JSON as its communication format, and the
+        standard
+        HTTP methods like GET, PUT, POST and DELETE. URIs for Bitbucket's REST API resource have the following structure:
     </p>
     <pre>    http://host:port/context/rest/api-name/api-version/path/to/resource
     </pre>
     <p>
-    For example, the following URI would retrieve a page of the latest commits to the <strong>jira</strong> repository in
+        For example, the following URI would retrieve a page of the latest commits to the <strong>jira</strong> repository
+        in
         the <strong>Jira</strong> project on <a href="https://stash.atlassian.com">https://stash.atlassian.com</a>.
     </p>
     <pre>    https://stash.atlassian.com/rest/api/1.0/projects/JIRA/repos/jira/commits
     </pre>
     <p>
-    See the API descriptions below for a full list of available resources.
+        See the API descriptions below for a full list of available resources.
     </p>
     <p>
         Alternatively we also publish a list of resources in
@@ -51,7 +57,8 @@ info:
     </p>
     <h2 id="paging-params">Paged APIs</h2>
     <p>
-        Bitbucket uses paging to conserve server resources and limit response size for resources that return potentially large
+        Bitbucket uses paging to conserve server resources and limit response size for resources that return potentially
+        large
         collections of items. A request to a paged API will result in a <code>values</code> array wrapped in a JSON object
         with some paging metadata, like this:
     </p>
@@ -108,13 +115,15 @@ info:
     </pre>
     <h2 id="authentication">Authentication</h2>
     <p>
-        Any authentication that works against Bitbucket will work against the REST API. <b>The preferred authentication methods
-        are HTTP Basic (when using SSL) and OAuth</b>. Other supported methods include: HTTP Cookies and Trusted
+        Any authentication that works against Bitbucket will work against the REST API. <b>The preferred authentication
+            methods
+            are HTTP Basic (when using SSL) and OAuth</b>. Other supported methods include: HTTP Cookies and Trusted
         Applications.
     </p>
     <p>
         You can find OAuth code samples in several programming languages at
-        <a href="https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples">bitbucket.org/atlassian_tutorial/atlassian-oauth-examples</a>.
+        <a
+            href="https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples">bitbucket.org/atlassian_tutorial/atlassian-oauth-examples</a>.
     </p>
     <p>
         The log-in page uses cookie-based authentication, so if you are using Bitbucket in a browser you can call REST from
@@ -126,79 +135,81 @@ info:
         be broadly categorised into:
     </p>
     <table>
-    <tbody><tr>
-    <th>HTTP Code</th>
-    <th>Description</th>
-    </tr>
-    <tr>
-    <td>400 (Bad Request)</td>
-    <td>
+        <tbody>
+            <tr>
+                <th>HTTP Code</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>400 (Bad Request)</td>
+                <td>
                     One or more of the required parameters or attributes:
                     <ul>
-    <li>were missing from the request;</li>
-    <li>incorrectly formatted; or</li>
-    <li>inappropriate in the given context.</li>
-    </ul>
-    </td>
-    </tr>
-    <tr>
-    <td>401 (Unauthorized)</td>
-    <td>
+                        <li>were missing from the request;</li>
+                        <li>incorrectly formatted; or</li>
+                        <li>inappropriate in the given context.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>401 (Unauthorized)</td>
+                <td>
                     Either:
                     <ul>
-    <li>Authentication is required but was not attempted.</li>
-    <li>Authentication was attempted but failed.</li>
-    <li>Authentication was successful but the authenticated user does not have the requisite permission
+                        <li>Authentication is required but was not attempted.</li>
+                        <li>Authentication was attempted but failed.</li>
+                        <li>Authentication was successful but the authenticated user does not have the requisite permission
                             for the resource.</li>
-    </ul>
+                    </ul>
                     See the individual resource documentation for details of required permissions.
                 </td>
-    </tr>
-    <tr>
-    <td>403 (Forbidden)</td>
-    <td>
+            </tr>
+            <tr>
+                <td>403 (Forbidden)</td>
+                <td>
                     Actions are usually "forbidden" if they involve breaching the licensed user limit of the server, or
                     degrading the authenticated user's permission level. See the individual resource documentation for more
                     details.
                 </td>
-    </tr>
-    <tr>
-    <td>404 (Not Found)</td>
-    <td>
+            </tr>
+            <tr>
+                <td>404 (Not Found)</td>
+                <td>
                     The entity you are attempting to access, or the project or repository containing it, does not exist.
                 </td>
-    </tr>
-    <tr>
-    <td>405 (Method Not Allowed)</td>
-    <td>
+            </tr>
+            <tr>
+                <td>405 (Method Not Allowed)</td>
+                <td>
                     The request HTTP method is not appropriate for the targeted resource. For example an HTTP GET to a
                     resource that only accepts an HTTP POST will result in a 405.
                 </td>
-    </tr>
-    <tr>
-    <td>409 (Conflict)</td>
-    <td>
+            </tr>
+            <tr>
+                <td>409 (Conflict)</td>
+                <td>
                     The attempted update failed due to some conflict with an existing resource. For example:
                     <ul>
-    <li>Creating a project with a key that already exists</li>
-    <li>Merging an out-of-date pull request</li>
-    <li>Deleting a comment that has replies</li>
-    <li>etc.</li>
-    </ul>
+                        <li>Creating a project with a key that already exists</li>
+                        <li>Merging an out-of-date pull request</li>
+                        <li>Deleting a comment that has replies</li>
+                        <li>etc.</li>
+                    </ul>
                     See the individual resource documentation for more details.
                 </td>
-    </tr>
-    <tr>
-    <td>415 (Unsupported Media Type)</td>
-    <td>
+            </tr>
+            <tr>
+                <td>415 (Unsupported Media Type)</td>
+                <td>
                     The request entity has a <code>Content-Type</code> that the server does not support. Almost all of the
                     Bitbucket REST API accepts <code>application/json</code> format, but check the individual resource
                     documentation for more details. Additionally, double-check that you are setting the
                     <code>Content-Type</code> header correctly on your request (e.g. using
                     <code>-H "Content-Type: application/json"</code> in cURL).
                 </td>
-    </tr>
-    </tbody></table>
+            </tr>
+        </tbody>
+    </table>
     <p>
         For <strong>400</strong> HTTP codes the response will typically contain one or more validation error messages,
         for example:
@@ -243,23 +254,32 @@ info:
     </p>
     <h2 id="personal-repositories">Personal Repositories</h2>
     <p>
-        Bitbucket allows users to manage their own repositories, called personal repositories. These are repositories associated
+        Bitbucket allows users to manage their own repositories, called personal repositories. These are repositories
+        associated
         with the user and to which they always have REPO_ADMIN permission.
     </p>
     <p>
         Accessing personal repositories via REST is achieved through the normal project-centric REST URLs
         using the user's slug prefixed by tilde as the project key. E.g. to list personal repositories for a
         user with slug "johnsmith" you would make a GET to:
-        </p><pre>http://example.com/rest/api/1.0/projects/~johnsmith/repos</pre><p></p>
+    </p>
+    <pre>http://example.com/rest/api/1.0/projects/~johnsmith/repos</pre>
+    <p></p>
     <p>
-        In addition to this, Bitbucket allows access to these repositories through an alternate set of user-centric REST URLs
+        In addition to this, Bitbucket allows access to these repositories through an alternate set of user-centric REST
+        URLs
         beginning with:
-        </p><pre>http://example.com/rest/api/1.0/users/~{userSlug}/repos</pre>
-        E.g. to list the forks of the repository with slug
-        "nodejs" in the personal project of user with slug "johnsmith" using the regular REST URL you would make a GET to:
-        <pre>http://example.com/rest/api/1.0/projects/~johnsmith/repos/nodejs/forks</pre>
-        Using the alternate URL, you would make a GET to:
-        <pre>http://example.com/rest/api/1.0/users/johnsmith/repos/nodejs/forks</pre><p></p>
+    </p>
+    <pre>http://example.com/rest/api/1.0/users/~{userSlug}/repos</pre>
+    E.g. to list the forks of the repository with slug
+    "nodejs" in the personal project of user with slug "johnsmith" using the regular REST URL you would make a GET to:
+    <pre>http://example.com/rest/api/1.0/projects/~johnsmith/repos/nodejs/forks</pre>
+    Using the alternate URL, you would make a GET to:
+    <pre>http://example.com/rest/api/1.0/users/johnsmith/repos/nodejs/forks</pre>
+    <p></p>
+  contact:
+    name: Niklas Walter
+    url: 'https://github.com/TwoStone/bitbucket-server-api'
 servers:
   - url: 'https://example.com/'
     description: ''
@@ -500,7 +520,7 @@ paths:
           in: query
           name: limit
       security:
-        - credentials: []
+        - usernamePassword: []
     parameters: []
 components:
   schemas:
@@ -671,7 +691,7 @@ components:
           required:
             - values
   securitySchemes:
-    credentials:
+    usernamePassword:
       type: http
       scheme: basic
 security:
