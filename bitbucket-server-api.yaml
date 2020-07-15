@@ -533,7 +533,7 @@ components:
         isLastPage:
           type: boolean
         nextPageStart:
-          type: number
+          type: integer
       required:
         - size
         - limit
