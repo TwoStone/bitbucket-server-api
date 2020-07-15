@@ -281,7 +281,7 @@ info:
     name: Niklas Walter
     url: 'https://github.com/TwoStone/bitbucket-server-api'
 servers:
-  - url: https://example.com
+  - url: 'https://example.com'
     description: ''
 paths:
   /rest/api/1.0/projects:
@@ -318,11 +318,11 @@ paths:
           name: permission
           description: permission to filter by
         - schema:
-            type: number
+            type: integer
           in: query
           name: start
         - schema:
-            type: number
+            type: integer
           in: query
           name: limit
   '/rest/api/1.0/projects/{projectKey}':
@@ -398,11 +398,11 @@ paths:
         The authenticated user must have REPO_READ permission for the specified project to call this resource.
       parameters:
         - schema:
-            type: number
+            type: integer
           in: query
           name: limit
         - schema:
-            type: number
+            type: integer
           in: query
           name: start
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}':
@@ -508,11 +508,11 @@ paths:
           name: visibility
           description: '(optional) if specified, this will limit the resulting repository list based on the repositories visibility. Valid values are public or private.'
         - schema:
-            type: number
+            type: integer
           in: query
           name: start
         - schema:
-            type: number
+            type: integer
           in: query
           name: limit
       security:
