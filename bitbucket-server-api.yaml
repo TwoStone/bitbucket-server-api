@@ -518,6 +518,83 @@ paths:
       security:
         - usernamePassword: []
     parameters: []
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/branches'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getBranches
+      description: |-
+        Retrieve the branches matching the supplied filterText param.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: base
+          description: base branch or tag to compare each branch to (for the metadata providers that uses that information)
+        - schema:
+            type: boolean
+          in: query
+          name: details
+          description: whether to retrieve plugin-provided metadata about each branch
+        - schema:
+            type: string
+          in: query
+          name: filterText
+          description: the text to match on
+        - schema:
+            type: string
+            enum:
+              - ALPHABETICAL
+              - MODIFICATION
+          in: query
+          name: orderBy
+          description: ordering of refs either ALPHABETICAL (by name) or MODIFICATION (last updated)
+          explode: false
+        - schema:
+            type: boolean
+          in: query
+          name: boostMatches
+          description: controls whether exact and prefix matches will be boosted to the top
+        - schema:
+            type: integer
+          in: query
+          name: start
+        - schema:
+            type: integer
+          in: query
+          name: limit
 components:
   schemas:
     page:
@@ -686,6 +763,53 @@ components:
                 $ref: '#/components/schemas/repository'
           required:
             - values
+    branch:
+      title: branch
+      type: object
+      x-examples:
+        branch:
+          id: refs/heads/master
+          displayId: master
+          type: BRANCH
+          latestCommit: 8d51122def5632836d1cb1026e879069e10a1e13
+          latestChangeset: 8d51122def5632836d1cb1026e879069e10a1e13
+          isDefault: true
+      properties:
+        id:
+          type: string
+        displayId:
+          type: string
+        type:
+          type: string
+          enum:
+            - BRANCH
+        latestCommit:
+          type: string
+          pattern: '[A-Fa-f0-9]+'
+        latestChangeset:
+          type: string
+          pattern: '[A-Fa-f0-9]+'
+        isDefault:
+          type: boolean
+      required:
+        - id
+        - displayId
+        - type
+        - latestCommit
+        - latestChangeset
+        - isDefault
+    branches:
+      title: branches
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type:
+                - string
+                - array
+              items:
+                $ref: '#/components/schemas/branch'
   securitySchemes:
     usernamePassword:
       type: http
