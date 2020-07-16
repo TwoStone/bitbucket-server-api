@@ -805,11 +805,9 @@ components:
         - type: object
           properties:
             values:
-              type:
-                - string
-                - array
+              type: array
               items:
-                $ref: '#/components/schemas/branch'
+                $ref: ''
   securitySchemes:
     usernamePassword:
       type: http
