@@ -962,14 +962,7 @@ components:
         revision:
           type: string
         children:
-          allOf:
-            - $ref: '#/components/schemas/page'
-            - type: object
-              properties:
-                values:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/children'
+          $ref: '#/components/schemas/children'
     path:
       title: path
       type: object
