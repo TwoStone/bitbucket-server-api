@@ -1,4 +1,7 @@
 openapi: 3.0.0
+tags:
+  - bitbucket
+  - client-api
 info:
   title: bitbucket-server-api
   version: 7.3.1
@@ -287,6 +290,7 @@ paths:
   /rest/api/1.0/projects:
     get:
       summary: REST resource for working with projects
+      tags: []
       responses:
         '200':
           description: OK
@@ -328,6 +332,7 @@ paths:
   '/rest/api/1.0/projects/{projectKey}':
     get:
       summary: REST resource for working with projects
+      tags: []
       responses:
         '200':
           description: OK
@@ -595,6 +600,132 @@ paths:
             type: integer
           in: query
           name: limit
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/browse':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: browseRepository
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/directory'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: browseRepository
+      description: |-
+        Retrieve a page of content for a file path at a specified revision.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: at
+          description: the commit ID or ref to retrieve the content for.
+        - schema:
+            type: integer
+          in: query
+          name: start
+        - schema:
+            type: integer
+          in: query
+          name: limit
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/browse/{path}':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: string
+          pattern: '.*'
+        name: path
+        in: path
+        required: true
+    get:
+      summary: browseRepositoryPath
+      description: |-
+        Retrieve a page of content for a file path at a specified revision.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/file'
+                  - $ref: '#/components/schemas/directory'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: browseRepositoryPath
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: at
+          description: the commit ID or ref to retrieve the content for.
+        - schema:
+            type: integer
+          in: query
+          name: start
+        - schema:
+            type: integer
+          in: query
+          name: limit
 components:
   schemas:
     page:
@@ -616,7 +747,6 @@ components:
         - limit
         - start
         - isLastPage
-        - nextPageStart
     project:
       title: project
       type: object
@@ -807,7 +937,82 @@ components:
             values:
               type: array
               items:
-                $ref: ''
+                $ref: '#/components/schemas/branch'
+    file:
+      title: file
+      type: object
+      properties:
+        start:
+          type: integer
+        size:
+          type: integer
+        isLastPage:
+          type: boolean
+        lines:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+    directory:
+      title: directory
+      type: object
+      properties:
+        path:
+          $ref: '#/components/schemas/path'
+        revision:
+          type: string
+        children:
+          allOf:
+            - $ref: '#/components/schemas/page'
+            - type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    oneOf:
+                      - properties:
+                          path:
+                            $ref: '#/components/schemas/path'
+                          contentId:
+                            type: string
+                          type:
+                            type: string
+                            enum:
+                              - FILE
+                          size:
+                            type: string
+                        required:
+                          - type
+                      - properties:
+                          path:
+                            $ref: '#/components/schemas/path'
+                          node:
+                            type: string
+                          type:
+                            type: string
+                            enum:
+                              - DIRECTORY
+                        required:
+                          - type
+                    type: object
+    path:
+      title: path
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            type: string
+        parent:
+          type: string
+        name:
+          type: string
+        extension:
+          type: string
+        toString:
+          type: string
   securitySchemes:
     usernamePassword:
       type: http
