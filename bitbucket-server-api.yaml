@@ -969,22 +969,7 @@ components:
                 values:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      path:
-                        $ref: '#/components/schemas/path'
-                      contentId:
-                        type: string
-                      type:
-                        type: string
-                        enum:
-                          - FILE
-                      size:
-                        type: string
-                      node:
-                        type: string
-                    required:
-                      - type
+                    $ref: '#/components/schemas/children'
     path:
       title: path
       type: object
@@ -1006,6 +991,31 @@ components:
       allOf:
         - $ref: '#/components/schemas/file'
         - $ref: '#/components/schemas/directory'
+    children:
+      title: children
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    $ref: '#/components/schemas/path'
+                  contentId:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                      - FILE
+                  size:
+                    type: string
+                  node:
+                    type: string
+                required:
+                  - type
   securitySchemes:
     usernamePassword:
       type: http
