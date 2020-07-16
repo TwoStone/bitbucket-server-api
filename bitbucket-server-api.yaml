@@ -690,9 +690,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/file'
-                  - $ref: '#/components/schemas/directory'
+                $ref: '#/components/schemas/fileOrDirectory'
         '400':
           description: Bad Request
           content:
@@ -971,32 +969,22 @@ components:
                 values:
                   type: array
                   items:
-                    oneOf:
-                      - properties:
-                          path:
-                            $ref: '#/components/schemas/path'
-                          contentId:
-                            type: string
-                          type:
-                            type: string
-                            enum:
-                              - FILE
-                          size:
-                            type: string
-                        required:
-                          - type
-                      - properties:
-                          path:
-                            $ref: '#/components/schemas/path'
-                          node:
-                            type: string
-                          type:
-                            type: string
-                            enum:
-                              - DIRECTORY
-                        required:
-                          - type
                     type: object
+                    properties:
+                      path:
+                        $ref: '#/components/schemas/path'
+                      contentId:
+                        type: string
+                      type:
+                        type: string
+                        enum:
+                          - FILE
+                      size:
+                        type: string
+                      node:
+                        type: string
+                    required:
+                      - type
     path:
       title: path
       type: object
@@ -1013,6 +1001,11 @@ components:
           type: string
         toString:
           type: string
+    fileOrDirectory:
+      title: fileOrDirectory
+      allOf:
+        - $ref: '#/components/schemas/file'
+        - $ref: '#/components/schemas/directory'
   securitySchemes:
     usernamePassword:
       type: http
