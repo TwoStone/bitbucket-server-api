@@ -774,7 +774,7 @@ paths:
         '200':
           description: OK
       description: Deletes the post webhook from the repository
-  '/rest/build-status/1.0/commits/:commitHash':
+  '/rest/build-status/1.0/commits/{commitHash}':
     post:
       summary: Post build-result
       operationId: postBuildResult
@@ -808,6 +808,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/buildResult'
+    parameters:
+      - schema:
+          type: string
+        name: commitHash
+        in: path
+        required: true
 components:
   schemas:
     page:
