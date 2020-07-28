@@ -1362,6 +1362,37 @@ paths:
               $ref: '#/components/schemas/webhook'
       tags:
         - webhook
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get Pull Requests
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pullRequests'
+      operationId: getPullRequests
+      description: |-
+        Retrieve a page of pull requests to or from the specified repository.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource. Optionally clients can specify PR participant filters. Each filter has a mandatory username.N parameter, and the optional role.N and approved.N parameters.
+
+        username.N - the "root" of a single participant filter, where "N" is a natural number starting from 1. This allows clients to specify multiple participant filters, by providing consecutive filters as username.1, username.2 etc. Note that the filters numbering has to start with 1 and be continuous for all filters to be processed. The total allowed number of participant filters is 10 and all filters exceeding that limit will be dropped.
+        role.N(optional) the role associated with username.N. This must be one of AUTHOR, REVIEWER, orPARTICIPANT
+        approved.N(optional) the approved status associated with username.N. That is whether username.N has approved the PR. Either true, or false
 components:
   schemas:
     page:
@@ -1947,6 +1978,141 @@ components:
                 $ref: '#/components/schemas/buildStatus'
           required:
             - values
+    pullRequests:
+      title: pullRequests
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: array
+          items:
+            $ref: '#/components/schemas/pullRequest'
+    pullRequest:
+      title: pullRequest
+      type: object
+      properties:
+        id:
+          type: integer
+        version:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        state:
+          type: string
+        open:
+          type: boolean
+        closed:
+          type: boolean
+        createdDate:
+          type: integer
+        updatedDate:
+          type: integer
+        fromRef:
+          $ref: '#/components/schemas/repositoryRef'
+        toRef:
+          $ref: '#/components/schemas/repositoryRef'
+        locked:
+          type: boolean
+        author:
+          $ref: '#/components/schemas/userRole'
+        reviewers:
+          type: array
+          items:
+            $ref: '#/components/schemas/userRole'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/userRole'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
+    user:
+      title: user
+      type: object
+      x-examples:
+        example-1:
+          name: jcitizen
+          emailAddress: jane@example.com
+          id: 101
+          displayName: Jane Citizen
+          active: true
+          slug: jcitizen
+          type: NORMAL
+          directoryName: Bitbucket Internal Directory
+          deletable: true
+          lastAuthenticationTimestamp: 1368145580548
+          mutableDetails: true
+          mutableGroups: true
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        emailAddress:
+          type: string
+        displayName:
+          type: string
+        active:
+          type: boolean
+        slug:
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - name
+        - emailAddress
+        - displayName
+        - active
+        - slug
+        - type
+    userRole:
+      title: userRole
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/user'
+        role:
+          type: string
+          enum:
+            - PARTICIPANT
+            - REVIEWER
+            - AUTHOR
+        approved:
+          type: boolean
+        status:
+          type: string
+          enum:
+            - UNAPPROVED
+            - APPROVED
+    repositoryRef:
+      title: repositoryRef
+      type: object
+      properties:
+        id:
+          type: string
+        repository:
+          type: object
+          required:
+            - slug
+            - project
+          properties:
+            slug:
+              type: string
+            name:
+              type: string
+            project:
+              type: object
+              required:
+                - key
+              properties:
+                key:
+                  type: string
+      required:
+        - id
+        - repository
   securitySchemes:
     usernamePassword:
       type: http
