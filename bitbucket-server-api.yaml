@@ -724,6 +724,56 @@ paths:
             type: integer
           in: query
           name: limit
+  '/rest/webhook/1.0/projects/{projectKey}/repos/{repositorySlug}/configurations':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get Post Webhooks
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/postWebhook'
+      operationId: getPostWebhooks
+      description: Returns the registered post webhooks for the repository.
+  '/rest/webhook/1.0/projects/{projectKey}/repos/{repositorySlug}/configurations/{ID}':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: number
+        name: ID
+        in: path
+        required: true
+    delete:
+      summary: Delete post webhook
+      operationId: deletePostWebhook
+      responses:
+        '200':
+          description: OK
+      description: Deletes the post webhook from the repository
 components:
   schemas:
     page:
@@ -1009,6 +1059,73 @@ components:
                     type: string
                 required:
                   - type
+    postWebhook:
+      properties:
+        branchCreated:
+          type: boolean
+        branchDeleted:
+          type: boolean
+        branchesToIgnore:
+          type: string
+        buildStatus:
+          type: boolean
+        committersToIgnore:
+          type: string
+        enabled:
+          type: boolean
+        id:
+          type: integer
+        prCommented:
+          type: boolean
+        prCreated:
+          type: boolean
+        prDeclined:
+          type: boolean
+        prMerged:
+          type: boolean
+        prReopened:
+          type: boolean
+        prRescoped:
+          type: boolean
+        prUpdated:
+          type: boolean
+        repoPush:
+          type: boolean
+        tagCreated:
+          type: boolean
+        title:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - title
+        - url
+        - committersToIgnore
+        - branchesToIgnore
+        - enabled
+      title: Post Webhook
+      type: object
+      x-examples:
+        example:
+          id: 1136
+          title: Jenkins hook
+          url: 'https://jenkins.core.build.vwn.cloud/bitbucket-scmsource-hook/notify'
+          committersToIgnore: ''
+          branchesToIgnore: ''
+          enabled: true
+          tagCreated: false
+          branchDeleted: true
+          branchCreated: true
+          repoPush: true
+          prDeclined: true
+          prRescoped: true
+          prMerged: true
+          prReopened: true
+          prUpdated: true
+          prCreated: true
+          prCommented: false
+          buildStatus: false
   securitySchemes:
     usernamePassword:
       type: http
