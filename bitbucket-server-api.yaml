@@ -1067,6 +1067,8 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/branch'
+          required:
+            - values
     file:
       title: file
       type: object
