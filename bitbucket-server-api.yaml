@@ -855,6 +855,154 @@ paths:
         Get the default branch of the repository.
 
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/commits/{commitId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: commitId
+        in: path
+        required: true
+    get:
+      summary: Get commit
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/commit'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getCommit
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Retrieve a single commit identified by its ID. In general, that ID is a SHA1. From 2.11, ref names like "refs/heads/master" are no longer accepted by this resource.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: path
+          description: 'an optional path to filter the commit by. If supplied the details returned may not be for the specified commit. Instead, starting from the specified commit, they will be the details for the first commit affecting the specified path.'
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/commits':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get commits
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/commits'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getCommits
+      description: |-
+        This is a paged API. This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Retrieve a page of commits from a given starting commit or "between" two commits. If no explicit commit is specified, the tip of the repository's default branch is assumed. commits may be identified by branch or tag name or by ID. A path may be supplied to restrict the returned commits to only those which affect that path.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      parameters:
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: followRenames
+          description: 'if true, the commit history of the specified file will be followed past renames. Only valid for a path to a single file.'
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: ignoreMissing
+          description: 'true to ignore missing commits, false otherwise'
+        - schema:
+            type: string
+            enum:
+              - exclude
+              - include
+              - only
+          in: query
+          name: merges
+          description: "\t\nif present, controls how merge commits should be filtered. Can be either exclude, to exclude merge commits, include, to include both merge commits and non-merge commits or only, to only return merge commits."
+        - schema:
+            type: string
+          in: query
+          name: path
+          description: an optional path to filter commits by
+        - schema:
+            type: string
+          in: query
+          name: since
+          description: the commit ID or ref (exclusively) to retrieve commits after
+        - schema:
+            type: string
+          in: query
+          name: until
+          description: the commit ID (SHA1) or ref (inclusively) to retrieve commits before
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: withCounts
+          description: optionally include the total number of commits and total number of unique authors
 components:
   schemas:
     page:
@@ -1240,6 +1388,84 @@ components:
           name: REPO-MASTER-42
           url: 'https://bamboo.example.com/browse/REPO-MASTER-42'
           description: Changes by John Doe
+    commit:
+      title: commit
+      type: object
+      properties:
+        id:
+          type: string
+        displayId:
+          type: string
+        author:
+          $ref: '#/components/schemas/user'
+        authorTimestamp:
+          type: integer
+        commiter:
+          $ref: '#/components/schemas/user'
+        commiterTimestamp:
+          type: string
+        message:
+          type: string
+        parents:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              displayId:
+                type: string
+      required:
+        - id
+        - displayId
+        - author
+        - authorTimestamp
+        - commiter
+        - commiterTimestamp
+        - message
+      x-examples:
+        example:
+          id: abcdef0123abcdef4567abcdef8987abcdef6543
+          displayId: abcdef0123a
+          author:
+            name: charlie
+            emailAddress: charlie@example.com
+          authorTimestamp: 1597071215598
+          committer:
+            name: charlie
+            emailAddress: charlie@example.com
+          committerTimestamp: 1597071215598
+          message: WIP on feature 1
+          parents:
+            - id: abcdef0123abcdef4567abcdef8987abcdef6543
+              displayId: abcdef0
+      description: A commit
+    user:
+      title: user
+      type: object
+      properties:
+        name:
+          type: string
+        emailAddress:
+          type: string
+      required:
+        - name
+        - emailAddress
+    commits:
+      title: commits
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/commit'
+            authorCount:
+              type: integer
+            totalCount:
+              type: integer
+      description: A list of commits
   securitySchemes:
     usernamePassword:
       type: http
