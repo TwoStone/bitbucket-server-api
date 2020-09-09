@@ -1399,6 +1399,23 @@ components:
     commit:
       title: commit
       type: object
+      x-examples:
+        example:
+          id: abcdef0123abcdef4567abcdef8987abcdef6543
+          displayId: abcdef0123a
+          author:
+            name: charlie
+            emailAddress: charlie@example.com
+          authorTimestamp: 1597071215598
+          committer:
+            name: charlie
+            emailAddress: charlie@example.com
+          committerTimestamp: 1597071215598
+          message: WIP on feature 1
+          parents:
+            - id: abcdef0123abcdef4567abcdef8987abcdef6543
+              displayId: abcdef0
+      description: A commit
       properties:
         id:
           type: string
@@ -1411,7 +1428,7 @@ components:
         commiter:
           $ref: '#/components/schemas/user'
         commiterTimestamp:
-          type: string
+          type: integer
         message:
           type: string
         parents:
@@ -1431,23 +1448,6 @@ components:
         - commiter
         - commiterTimestamp
         - message
-      x-examples:
-        example:
-          id: abcdef0123abcdef4567abcdef8987abcdef6543
-          displayId: abcdef0123a
-          author:
-            name: charlie
-            emailAddress: charlie@example.com
-          authorTimestamp: 1597071215598
-          committer:
-            name: charlie
-            emailAddress: charlie@example.com
-          committerTimestamp: 1597071215598
-          message: WIP on feature 1
-          parents:
-            - id: abcdef0123abcdef4567abcdef8987abcdef6543
-              displayId: abcdef0
-      description: A commit
     user:
       title: user
       type: object
