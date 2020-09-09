@@ -1003,6 +1003,14 @@ paths:
           in: query
           name: withCounts
           description: optionally include the total number of commits and total number of unique authors
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: start
 components:
   schemas:
     page:
