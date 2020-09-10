@@ -410,6 +410,69 @@ paths:
             type: integer
           in: query
           name: start
+    post:
+      summary: Create repository
+      operationId: createRepository
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repository'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        Create a new repository. Requires an existing project in which this repository will be created. The only parameters which will be used are name and scmId.
+
+        The authenticated user must have PROJECT_ADMIN permission for the context project to call this resource.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scmId:
+                  type: string
+                  default: git
+                  enum:
+                    - git
+                    - mercurial
+                forkable:
+                  type: boolean
+                defaultBranch:
+                  type: string
+                public:
+                  type: boolean
+                description:
+                  type: string
+              required:
+                - name
+            examples:
+              example:
+                value:
+                  name: My repo
+                  scmId: git
+                  forkable: true
+                  defaultBranch: main
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}':
     parameters:
       - schema:
