@@ -446,26 +446,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                scmId:
-                  type: string
-                  default: git
-                  enum:
-                    - git
-                    - mercurial
-                forkable:
-                  type: boolean
-                defaultBranch:
-                  type: string
-                public:
-                  type: boolean
-                description:
-                  type: string
-              required:
-                - name
+              $ref: '#/components/schemas/createRepository'
             examples:
               example:
                 value:
@@ -1539,6 +1520,35 @@ components:
           required:
             - values
       description: A list of commits
+    createRepository:
+      title: createRepository
+      type: object
+      properties:
+        name:
+          type: string
+        scmId:
+          type: string
+          default: git
+          enum:
+            - git
+            - mercurial
+        forkable:
+          type: boolean
+        defaultBranch:
+          type: string
+        public:
+          type: boolean
+        description:
+          type: string
+      required:
+        - name
+      x-examples:
+        example:
+          value:
+            name: My repo
+            scmId: git
+            forkable: true
+            defaultBranch: main
   securitySchemes:
     usernamePassword:
       type: http
