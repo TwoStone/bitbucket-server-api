@@ -580,7 +580,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: Get Branches
       tags: []
       responses:
         '200':
@@ -1055,6 +1055,226 @@ paths:
             type: integer
           in: query
           name: start
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/webhooks':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get webhooks
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhooks'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getWebhooks
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Find webhooks in this repository.
+
+        The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: start
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: string
+            enum:
+              - 'repo:refs_changed'
+              - 'repo:comment:added'
+              - 'repo:modified'
+              - 'repo:forked'
+              - 'repo:comment:edited'
+              - 'repo:comment:deleted'
+              - 'mirror:repo_synchronized'
+              - 'pr:opened'
+              - 'pr:from_ref_updated'
+              - 'pr:modified'
+              - 'pr:reviewer:updated'
+              - 'pr:reviewer:approved'
+              - 'pr:reviewer:unapproved'
+              - 'pr:reviewer:needs_work'
+              - 'pr:merged'
+              - 'pr:declined'
+              - 'pr:deleted'
+              - 'pr:comment:added'
+              - 'pr:comment:edited'
+              - 'pr:comment:deleted'
+          in: query
+          name: event
+          description: 'list of {@link com.atlassian.webhooks.WebhookEvent} ids to filter for'
+    post:
+      summary: Create webhook
+      operationId: createWebhook
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Create a webhook for the repository specified via the URL.
+
+        The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook'
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/webhooks/{webhookId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: webhookId
+        in: path
+        required: true
+    get:
+      summary: Get Webhook
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getWebhook
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Get a webhook by id.
+
+        The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+    delete:
+      summary: Delete Webhook
+      operationId: deleteWebhook
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Delete a webhook for the repository specified via the URL.
+
+        The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+    put:
+      summary: Update webhook
+      operationId: updateWebhook
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |+
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Update an existing webhook.
+
+        The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook'
 components:
   schemas:
     page:
@@ -1549,6 +1769,81 @@ components:
             scmId: git
             forkable: true
             defaultBranch: main
+    webhook:
+      title: webhook
+      type: object
+      x-examples:
+        example-1:
+          id: 10
+          name: Webhook Name
+          createdDate: 1513106011000
+          updatedDate: 1513106011000
+          events:
+            - 'repo:refs_changed'
+            - 'repo:modified'
+          configuration:
+            secret: password
+          url: 'http://example.com'
+          active: true
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        createDate:
+          type: integer
+        updatedDate:
+          type: integer
+        events:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/webhookEvent'
+        configuration:
+          type: object
+          properties:
+            secret:
+              type: string
+        url:
+          type: string
+      required:
+        - name
+        - events
+    webhookEvent:
+      type: string
+      title: webhookEvent
+      enum:
+        - 'repo:refs_changed'
+        - 'repo:comment:added'
+        - 'repo:modified'
+        - 'repo:forked'
+        - 'repo:comment:edited'
+        - 'repo:comment:deleted'
+        - 'mirror:repo_synchronized'
+        - 'pr:opened'
+        - 'pr:from_ref_updated'
+        - 'pr:modified'
+        - 'pr:reviewer:updated'
+        - 'pr:reviewer:approved'
+        - 'pr:reviewer:unapproved'
+        - 'pr:reviewer:needs_work'
+        - 'pr:merged'
+        - 'pr:declined'
+        - 'pr:deleted'
+        - 'pr:comment:added'
+        - 'pr:comment:edited'
+        - 'pr:comment:deleted'
+    webhooks:
+      title: webhooks
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/webhook'
+      description: A list of webhooks
   securitySchemes:
     usernamePassword:
       type: http
