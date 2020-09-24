@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: bitbucket-webhook-receiver-api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /:
+    post:
+      summary: Receive wehook event
+      operationId: post-webhook
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Request-Id
+          description: A unique UUID for each webhook request
+          required: true
+        - schema:
+            type: string
+            enum:
+              - 'repo:refs_changed'
+              - 'repo:comment:added'
+              - 'repo:modified'
+              - 'repo:forked'
+              - 'repo:comment:edited'
+              - 'repo:comment:deleted'
+              - 'mirror:repo_synchronized'
+              - 'pr:opened'
+              - 'pr:from_ref_updated'
+              - 'pr:modified'
+              - 'pr:reviewer:updated'
+              - 'pr:reviewer:approved'
+              - 'pr:reviewer:unapproved'
+              - 'pr:reviewer:needs_work'
+              - 'pr:merged'
+              - 'pr:declined'
+              - 'pr:deleted'
+              - 'pr:comment:added'
+              - 'pr:comment:edited'
+              - 'pr:comment:deleted'
+          in: header
+          name: X-Event-Key
+          description: |-
+            The event that kicked off this webhook. For example, a repository push will have
+
+            repo:refs_changed.
+          required: true
+          explode: false
+          allowReserved: false
+        - schema:
+            type: string
+          in: header
+          name: X-Hub-Signature
+          description: "Webhook Signature. \n\nWhen you define a secret for a webhook, each request is signed via a Hash-based Message Authentication Code (HMAC).\n\nThe default for this algorithm is HMACSha256. The header X-Hub-Signature is defined and contains the HMAC.\n\nTo authenticate the validity of the message payload, the receiver can perform the HMAC algorithm on the received body with the secret as the key to the HMAC algorithm.\n\nIf the results do not match, it may indicate there was a problem with transmission that has caused the message payload to change. "
+      description: ''
+    parameters: []
+components:
+  schemas: {}
