@@ -2,6 +2,20 @@ openapi: 3.0.0
 tags:
   - bitbucket
   - client-api
+  - name: projects
+    description: Operations focusing on projects
+  - name: repositories
+    description: Operations focusing on repositories
+  - name: webhook
+    description: Operations focusing on webhooks
+  - name: branches
+    description: Operations focusing on branches
+  - name: commits
+    description: Operations focusing on commits
+  - name: buildStatus
+    description: Operations focusing on buildStatus
+  - name: postWebhook
+    description: Operations focusing on postWebhooks
 info:
   title: bitbucket-server-api
   version: 7.3.1
@@ -289,8 +303,9 @@ servers:
 paths:
   /rest/api/1.0/projects:
     get:
-      summary: REST resource for working with projects
-      tags: []
+      summary: Get Projects
+      tags:
+        - projects
       responses:
         '200':
           description: OK
@@ -298,14 +313,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/projects'
+                $ref: '#/components/schemas/projectsPage'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getProjects
+      operationId: getProjectsPaged
       description: |-
         Retrieve a page of projects.
 
@@ -332,7 +347,8 @@ paths:
   '/rest/api/1.0/projects/{projectKey}':
     get:
       summary: REST resource for working with projects
-      tags: []
+      tags:
+        - projects
       responses:
         '200':
           description: OK
@@ -374,15 +390,16 @@ paths:
         in: path
         required: true
     get:
-      summary: REST resource for working with repositories
-      tags: []
+      summary: Get Repositories
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/repositories'
+                $ref: '#/components/schemas/repositoriesPage'
         '401':
           description: Unauthorized
           content:
@@ -395,7 +412,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getRepositories
+      operationId: getRepositoriesPaged
       description: |-
         Retrieve repositories from the project corresponding to the supplied projectKey.
 
@@ -454,6 +471,8 @@ paths:
                   scmId: git
                   forkable: true
                   defaultBranch: main
+      tags:
+        - repositories
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}':
     parameters:
       - schema:
@@ -467,8 +486,9 @@ paths:
         in: path
         required: true
     get:
-      summary: REST resource for working with repositories
-      tags: []
+      summary: Get Repository
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -495,22 +515,23 @@ paths:
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
   /rest/api/1.0/repos:
     get:
-      summary: REST resource for searching through repositories
-      tags: []
+      summary: Search repositories
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/repositories'
+                $ref: '#/components/schemas/repositoriesPage'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: searchRepositories
+      operationId: searchRepositoriesPaged
       description: |-
         Retrieve a page of repositories based on query parameters that control the search. See the documentation of the parameters for more details.
 
@@ -581,14 +602,13 @@ paths:
         required: true
     get:
       summary: Get Branches
-      tags: []
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/branches'
+                $ref: '#/components/schemas/branchesPage'
         '401':
           description: Unauthorized
           content:
@@ -601,7 +621,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getBranches
+      operationId: getBranchesPaged
       description: |-
         Retrieve the branches matching the supplied filterText param.
 
@@ -644,6 +664,8 @@ paths:
             type: integer
           in: query
           name: limit
+      tags:
+        - branches
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/browse':
     parameters:
       - schema:
@@ -658,7 +680,8 @@ paths:
         required: true
     get:
       summary: browseRepository
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -684,7 +707,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: browseRepository
+      operationId: browseRepositoryPaged
       description: |-
         Retrieve a page of content for a file path at a specified revision.
 
@@ -727,7 +750,8 @@ paths:
         Retrieve a page of content for a file path at a specified revision.
 
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -753,7 +777,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: browseRepositoryPath
+      operationId: browseRepositoryPathPaged
       parameters:
         - schema:
             type: string
@@ -782,7 +806,8 @@ paths:
         required: true
     get:
       summary: Get Post Webhooks
-      tags: []
+      tags:
+        - postWebhook
       responses:
         '200':
           description: OK
@@ -818,6 +843,8 @@ paths:
         '200':
           description: OK
       description: Deletes the post webhook from the repository
+      tags:
+        - postWebhook
   '/rest/build-status/1.0/commits/{commitHash}':
     post:
       summary: Post build-result
@@ -851,13 +878,62 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/buildResult'
+              $ref: '#/components/schemas/buildStatus'
+        description: |-
+          Associates a build status with a commit.
+
+          The state, the key and the url are mandatory. The name and description fields are optional.
+
+          All fields (mandatory or optional) are limited to 255 characters, except for the url, which is limited to 450 characters.
+
+          Supported values for the state are SUCCESSFUL, FAILED and INPROGRESS.
+
+          The authenticated user must have LICENSED permission or higher to call this resource.
+      tags:
+        - buildStatus
     parameters:
       - schema:
           type: string
         name: commitHash
         in: path
         required: true
+    get:
+      summary: Get build statuses
+      operationId: getBuildStatusesPaged
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/buildStatusPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: Gets the build statuses associated with a commit.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - newest
+              - oldest
+              - status
+          in: query
+          name: orderBy
+          description: 'how the results should be ordered. Options are NEWEST, OLDEST, STATUS. Defaults to NEWEST if not provided.'
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: start
+      tags:
+        - buildStatus
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches/default':
     parameters:
       - schema:
@@ -872,7 +948,8 @@ paths:
         required: true
     get:
       summary: Get default branch
-      tags: []
+      tags:
+        - branches
       responses:
         '200':
           description: OK
@@ -918,7 +995,8 @@ paths:
         required: true
     get:
       summary: Get commit
-      tags: []
+      tags:
+        - commits
       responses:
         '200':
           description: OK
@@ -971,14 +1049,15 @@ paths:
         required: true
     get:
       summary: Get commits
-      tags: []
+      tags:
+        - commits
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/commits'
+                $ref: '#/components/schemas/commitsPage'
         '400':
           description: Bad Request
           content:
@@ -997,7 +1076,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getCommits
+      operationId: getCommitsPaged
       description: |-
         This is a paged API. This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
 
@@ -1069,14 +1148,15 @@ paths:
         required: true
     get:
       summary: Get webhooks
-      tags: []
+      tags:
+        - webhook
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/webhooks'
+                $ref: '#/components/schemas/webhooksPage'
         '401':
           description: Unauthorized
           content:
@@ -1089,7 +1169,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getWebhooks
+      operationId: getWebhooksPaged
       description: |-
         This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
 
@@ -1170,6 +1250,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/webhook'
+      tags:
+        - webhook
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/webhooks/{webhookId}':
     parameters:
       - schema:
@@ -1189,7 +1271,8 @@ paths:
         required: true
     get:
       summary: Get Webhook
-      tags: []
+      tags:
+        - webhook
       responses:
         '200':
           description: OK
@@ -1240,6 +1323,8 @@ paths:
         Delete a webhook for the repository specified via the URL.
 
         The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+      tags:
+        - webhook
     put:
       summary: Update webhook
       operationId: updateWebhook
@@ -1275,6 +1360,8 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/webhook'
+      tags:
+        - webhook
 components:
   schemas:
     page:
@@ -1325,7 +1412,7 @@ components:
         - description
         - public
         - type
-    projects:
+    projectsPage:
       title: projects
       allOf:
         - $ref: '#/components/schemas/page'
@@ -1431,7 +1518,7 @@ components:
           type: string
       required:
         - href
-    repositories:
+    repositoriesPage:
       allOf:
         - $ref: '#/components/schemas/page'
         - type: object
@@ -1442,6 +1529,7 @@ components:
                 $ref: '#/components/schemas/repository'
           required:
             - values
+      title: repositoriesPage
     branch:
       title: branch
       type: object
@@ -1477,7 +1565,7 @@ components:
         - latestCommit
         - latestChangeset
         - isDefault
-    branches:
+    branchesPage:
       title: branches
       allOf:
         - $ref: '#/components/schemas/page'
@@ -1629,8 +1717,8 @@ components:
           prCreated: true
           prCommented: false
           buildStatus: false
-    buildResult:
-      title: buildResult
+    buildStatus:
+      title: buildStatus
       type: object
       properties:
         state:
@@ -1723,7 +1811,7 @@ components:
       required:
         - name
         - emailAddress
-    commits:
+    commitsPage:
       title: commits
       allOf:
         - $ref: '#/components/schemas/page'
@@ -1833,7 +1921,7 @@ components:
         - 'pr:comment:added'
         - 'pr:comment:edited'
         - 'pr:comment:deleted'
-    webhooks:
+    webhooksPage:
       title: webhooks
       allOf:
         - $ref: '#/components/schemas/page'
@@ -1846,6 +1934,18 @@ components:
           required:
             - values
       description: A list of webhooks
+    buildStatusPage:
+      title: buildStatusPage
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/buildStatus'
+          required:
+            - values
   securitySchemes:
     usernamePassword:
       type: http
