@@ -1897,6 +1897,7 @@ components:
       required:
         - name
         - events
+        - url
     webhookEvent:
       type: string
       title: webhookEvent
