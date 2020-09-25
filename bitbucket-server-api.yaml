@@ -602,8 +602,6 @@ paths:
         required: true
     get:
       summary: Get Branches
-      tags:
-        - repositories
       responses:
         '200':
           description: OK
@@ -666,6 +664,8 @@ paths:
             type: integer
           in: query
           name: limit
+      tags:
+        - branches
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/browse':
     parameters:
       - schema:
