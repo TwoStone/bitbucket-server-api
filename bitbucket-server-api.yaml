@@ -2,6 +2,18 @@ openapi: 3.0.0
 tags:
   - bitbucket
   - client-api
+  - name: projects
+    description: Operations focusing on projects
+  - name: repositories
+    description: Operations focusing on repositories
+  - name: webhook
+    description: Operations focusing on webhooks
+  - name: commit
+    description: Operations focusing on commits
+  - name: buildStatus
+    description: Operations focusing on buildStatus
+  - name: postWebhook
+    description: Operations focusing on postWebhooks
 info:
   title: bitbucket-server-api
   version: 7.3.1
@@ -454,6 +466,9 @@ paths:
                   scmId: git
                   forkable: true
                   defaultBranch: main
+      tags:
+        - repositories
+        - projects
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}':
     parameters:
       - schema:
@@ -818,6 +833,10 @@ paths:
         '200':
           description: OK
       description: Deletes the post webhook from the repository
+      tags:
+        - postWebhook
+        - projects
+        - repositories
   '/rest/build-status/1.0/commits/{commitHash}':
     post:
       summary: Post build-result
@@ -1183,6 +1202,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/webhook'
+      tags:
+        - webhook
+        - repositories
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/webhooks/{webhookId}':
     parameters:
       - schema:
@@ -1253,6 +1275,10 @@ paths:
         Delete a webhook for the repository specified via the URL.
 
         The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
+      tags:
+        - webhook
+        - repositories
+        - projects
     put:
       summary: Update webhook
       operationId: updateWebhook
@@ -1288,6 +1314,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/webhook'
+      tags:
+        - projects
+        - webhook
+        - repositories
 components:
   schemas:
     page:
