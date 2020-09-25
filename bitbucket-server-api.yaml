@@ -890,6 +890,44 @@ paths:
         name: commitHash
         in: path
         required: true
+    get:
+      summary: Get build statuses
+      operationId: getBuildStatusesPaged
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/buildStatusPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: Gets the build statuses associated with a commit.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - newest
+              - oldest
+              - status
+          in: query
+          name: orderBy
+          description: 'how the results should be ordered. Options are NEWEST, OLDEST, STATUS. Defaults to NEWEST if not provided.'
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: start
+      tags:
+        - buildStatus
+        - commit
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches/default':
     parameters:
       - schema:
@@ -1890,6 +1928,18 @@ components:
           required:
             - values
       description: A list of webhooks
+    buildStatusPage:
+      title: buildStatusPage
+      allOf:
+        - $ref: '#/components/schemas/page'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/buildStatus'
+          required:
+            - values
   securitySchemes:
     usernamePassword:
       type: http
