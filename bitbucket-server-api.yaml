@@ -8,7 +8,9 @@ tags:
     description: Operations focusing on repositories
   - name: webhook
     description: Operations focusing on webhooks
-  - name: commit
+  - name: branches
+    description: Operations focusing on branches
+  - name: commits
     description: Operations focusing on commits
   - name: buildStatus
     description: Operations focusing on buildStatus
@@ -302,7 +304,8 @@ paths:
   /rest/api/1.0/projects:
     get:
       summary: Get Projects
-      tags: []
+      tags:
+        - projects
       responses:
         '200':
           description: OK
@@ -344,7 +347,8 @@ paths:
   '/rest/api/1.0/projects/{projectKey}':
     get:
       summary: REST resource for working with projects
-      tags: []
+      tags:
+        - projects
       responses:
         '200':
           description: OK
@@ -387,7 +391,8 @@ paths:
         required: true
     get:
       summary: Get Repositories
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -468,7 +473,6 @@ paths:
                   defaultBranch: main
       tags:
         - repositories
-        - projects
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}':
     parameters:
       - schema:
@@ -483,7 +487,8 @@ paths:
         required: true
     get:
       summary: Get Repository
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -511,7 +516,8 @@ paths:
   /rest/api/1.0/repos:
     get:
       summary: Search repositories
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -596,7 +602,8 @@ paths:
         required: true
     get:
       summary: Get Branches
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -673,7 +680,8 @@ paths:
         required: true
     get:
       summary: browseRepository
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -742,7 +750,8 @@ paths:
         Retrieve a page of content for a file path at a specified revision.
 
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
-      tags: []
+      tags:
+        - repositories
       responses:
         '200':
           description: OK
@@ -797,7 +806,8 @@ paths:
         required: true
     get:
       summary: Get Post Webhooks
-      tags: []
+      tags:
+        - postWebhook
       responses:
         '200':
           description: OK
@@ -835,8 +845,6 @@ paths:
       description: Deletes the post webhook from the repository
       tags:
         - postWebhook
-        - projects
-        - repositories
   '/rest/build-status/1.0/commits/{commitHash}':
     post:
       summary: Post build-result
@@ -883,7 +891,6 @@ paths:
           The authenticated user must have LICENSED permission or higher to call this resource.
       tags:
         - buildStatus
-        - commit
     parameters:
       - schema:
           type: string
@@ -927,7 +934,6 @@ paths:
           name: start
       tags:
         - buildStatus
-        - commit
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches/default':
     parameters:
       - schema:
@@ -942,7 +948,8 @@ paths:
         required: true
     get:
       summary: Get default branch
-      tags: []
+      tags:
+        - branches
       responses:
         '200':
           description: OK
@@ -988,7 +995,8 @@ paths:
         required: true
     get:
       summary: Get commit
-      tags: []
+      tags:
+        - commits
       responses:
         '200':
           description: OK
@@ -1041,7 +1049,8 @@ paths:
         required: true
     get:
       summary: Get commits
-      tags: []
+      tags:
+        - commits
       responses:
         '200':
           description: OK
@@ -1139,7 +1148,8 @@ paths:
         required: true
     get:
       summary: Get webhooks
-      tags: []
+      tags:
+        - webhook
       responses:
         '200':
           description: OK
@@ -1242,7 +1252,6 @@ paths:
               $ref: '#/components/schemas/webhook'
       tags:
         - webhook
-        - repositories
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/webhooks/{webhookId}':
     parameters:
       - schema:
@@ -1262,7 +1271,8 @@ paths:
         required: true
     get:
       summary: Get Webhook
-      tags: []
+      tags:
+        - webhook
       responses:
         '200':
           description: OK
@@ -1315,8 +1325,6 @@ paths:
         The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
       tags:
         - webhook
-        - repositories
-        - projects
     put:
       summary: Update webhook
       operationId: updateWebhook
@@ -1353,9 +1361,7 @@ paths:
             schema:
               $ref: '#/components/schemas/webhook'
       tags:
-        - projects
         - webhook
-        - repositories
 components:
   schemas:
     page:
