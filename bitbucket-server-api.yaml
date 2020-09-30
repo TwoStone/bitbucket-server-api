@@ -1685,7 +1685,8 @@ paths:
           description: OK
           content:
             text/plain:
-              schema: {}
+              schema:
+                type: string
         '401':
           description: Unauthorized
           content:
@@ -1745,7 +1746,8 @@ paths:
           description: OK
           content:
             text/plain:
-              schema: {}
+              schema:
+                type: string
         '401':
           description: Unauthorized
           content:
