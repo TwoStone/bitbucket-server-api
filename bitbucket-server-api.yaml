@@ -1657,6 +1657,8 @@ paths:
                   type: integer
               required:
                 - version
+      tags:
+        - pullRequests
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}.diff':
     parameters:
       - schema:
@@ -1779,8 +1781,6 @@ paths:
         required: true
     get:
       summary: Get default branch
-      tags:
-        - branches
       responses:
         '200':
           description: OK
@@ -1807,7 +1807,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      operationId: getDefaultBranch
+      operationId: getConfiguredDefaultBranch
       description: |-
         This is a paged API. This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
 
@@ -1816,6 +1816,8 @@ paths:
         Every repository has a configured default branch, but that branch may not actually exist in the repository. For example, a newly-created repository will have a configured default branch even though no branches have been pushed yet.
 
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
+      tags:
+        - repositories
 components:
   schemas:
     page:
