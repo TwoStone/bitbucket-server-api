@@ -1769,14 +1769,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  displayId:
-                    type: string
-                  type:
-                    type: string
+                $ref: '#/components/schemas/defaultBranch'
         '401':
           description: Unauthorized
           content:
@@ -2550,6 +2543,20 @@ components:
       properties:
         version:
           type: integer
+    defaultBranch:
+      title: defaultBranch
+      type: object
+      properties:
+        id:
+          type: string
+        displayId:
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - displayId
+        - type
   securitySchemes:
     usernamePassword:
       type: http
