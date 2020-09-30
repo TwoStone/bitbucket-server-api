@@ -16,6 +16,8 @@ tags:
     description: Operations focusing on buildStatus
   - name: postWebhook
     description: Operations focusing on postWebhooks
+  - name: pullRequests
+    description: Operations focusing on pull requests
 info:
   title: bitbucket-server-api
   version: 7.3.1
@@ -1375,16 +1377,35 @@ paths:
         in: path
         required: true
     get:
-      summary: Get Pull Requests
-      tags: []
+      summary: Get Pull Request Page
+      tags:
+        - pullRequests
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pullRequests'
-      operationId: getPullRequests
+                $ref: '#/components/schemas/pullRequestsPage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getPullRequestsPaged
       description: |-
         Retrieve a page of pull requests to or from the specified repository.
 
@@ -1393,6 +1414,408 @@ paths:
         username.N - the "root" of a single participant filter, where "N" is a natural number starting from 1. This allows clients to specify multiple participant filters, by providing consecutive filters as username.1, username.2 etc. Note that the filters numbering has to start with 1 and be continuous for all filters to be processed. The total allowed number of participant filters is 10 and all filters exceeding that limit will be dropped.
         role.N(optional) the role associated with username.N. This must be one of AUTHOR, REVIEWER, orPARTICIPANT
         approved.N(optional) the approved status associated with username.N. That is whether username.N has approved the PR. Either true, or false
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: limit
+        - schema:
+            type: integer
+          in: query
+          name: start
+        - schema:
+            type: string
+            enum:
+              - ALL
+              - OPEN
+              - MERGED
+              - DECLINED
+          in: query
+          name: state
+          description: '(optional, defaults to OPEN). Supply ALL to return pull request in any state. If a state is supplied only pull requests in the specified state will be returned. Either OPEN, DECLINED or MERGED'
+        - schema:
+            type: string
+            enum:
+              - NEWEST
+              - OLDEST
+          in: query
+          name: order
+          description: '(optional, defaults to NEWEST) the order to return pull requests in, either OLDEST (as in: "oldest first") or NEWEST.'
+        - schema:
+            type: string
+          in: query
+          name: at
+          description: '(optional) a fully-qualified branch ID to find pull requests to or from, such as refs/heads/master'
+        - schema:
+            type: string
+            enum:
+              - INCOMING
+              - OUTGOING
+          in: query
+          name: direction
+          description: '(optional, defaults to INCOMING) the direction relative to the specified repository. Either INCOMING or OUTGOING.'
+        - schema:
+            type: string
+          in: query
+          name: filterText
+          description: '(optional) If specified, only pull requests where the title or description contains the supplied string will be returned.'
+    post:
+      summary: Create Pull Request
+      operationId: createPullRequest
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pullRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Create a new pull request between two branches. The branches may be in the same repository, or different ones. When using different repositories, they must still be in the same {@link Repository#getHierarchyId() hierarchy}.
+
+        The authenticated user must have REPO_READ permission for the "from" and "to"repositories to call this resource.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pullRequest'
+      tags:
+        - pullRequests
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: pullRequestId
+        in: path
+        required: true
+    get:
+      summary: Get pull request
+      tags:
+        - pullRequests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pullRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getPullRequest
+      parameters: []
+      description: |
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Retrieve a pull request.
+
+        The authenticated user must have REPO_READ permission for the repository that this pull request targets to call this resource.
+    put:
+      summary: Update pull request
+      operationId: updatePullRequest
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pullRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |
+        Update the title, description, reviewers or destination branch of an existing pull request.
+
+        Note: the reviewers list may be updated using this resource. However the author and participants list may not.
+
+        The authenticated user must either:
+        * be the author of the pull request and have the REPO_READ permission for the repository that this pull request targets; or
+        * have the REPO_WRITE permission for the repository that this pull request targets
+        to call this resource.
+      tags:
+        - pullRequests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                version:
+                  type: integer
+                title:
+                  type: string
+                description:
+                  type: string
+                reviewers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/userRole'
+                toRef:
+                  $ref: '#/components/schemas/repositoryRef'
+    delete:
+      summary: Delete pull request
+      operationId: deletePullRequest
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Deletes a pull request.
+
+        To call this resource, users must be authenticated and have permission to view the pull request. Additionally, they must:
+
+        be the pull request author, if the system is configured to allow authors to delete their own pull requests (this is the default) OR
+        have repository administrator permission for the repository the pull request is targeting
+        A body containing the version of the pull request must be provided with this request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version:
+                  type: integer
+              required:
+                - version
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}.diff':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: pullRequestId
+        in: path
+        required: true
+    get:
+      summary: Get PR Diff
+      tags:
+        - pullRequests
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getDiff
+      description: |-
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Streams the raw diff for a pull request.
+
+        The authenticated user must have REPO_READ permission for the repository that this pull request targets to call this resource.
+      parameters:
+        - schema:
+            type: integer
+            default: -1
+          in: query
+          name: contextLines
+          description: the number of context lines to include around added/removed lines in the diff
+        - schema:
+            type: string
+            enum:
+              - ignore-all
+          in: query
+          name: whitespaces
+          description: optional whitespace flag which can be set to ignore-all
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}.patch':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: pullRequestId
+        in: path
+        required: true
+    get:
+      summary: Get PR Patch
+      tags:
+        - pullRequests
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: get-rest-api-1.0-projects-projectKey-repos-repositorySlug-pull-requests-pullRequestId-.patch
+      description: |+
+        This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Streams a patch representing a pull request.
+
+        The authenticated user must have REPO_READ permission for the repository that this pull request targets to call this resource.
+
+
+  '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/default-branch':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get default branch
+      tags:
+        - branches
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  displayId:
+                    type: string
+                  type:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getDefaultBranch
+      description: |-
+        This is a paged API. This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
+
+        Retrieves the repository's configured default branch.
+
+        Every repository has a configured default branch, but that branch may not actually exist in the repository. For example, a newly-created repository will have a configured default branch even though no branches have been pushed yet.
+
+        The authenticated user must have REPO_READ permission for the specified repository to call this resource.
 components:
   schemas:
     page:
@@ -1831,17 +2254,6 @@ components:
         - commiter
         - commiterTimestamp
         - message
-    user:
-      title: user
-      type: object
-      properties:
-        name:
-          type: string
-        emailAddress:
-          type: string
-      required:
-        - name
-        - emailAddress
     commitsPage:
       title: commits
       allOf:
@@ -1978,16 +2390,20 @@ components:
                 $ref: '#/components/schemas/buildStatus'
           required:
             - values
-    pullRequests:
+    pullRequestsPage:
       title: pullRequests
       allOf:
         - $ref: '#/components/schemas/page'
         - type: array
           items:
             $ref: '#/components/schemas/pullRequest'
+      x-examples:
+        example-1: {}
     pullRequest:
       title: pullRequest
       type: object
+      x-examples:
+        example-1: {}
       properties:
         id:
           type: integer
@@ -1998,7 +2414,7 @@ components:
         description:
           type: string
         state:
-          type: string
+          $ref: '#/components/schemas/pullRequestState'
         open:
           type: boolean
         closed:
@@ -2028,6 +2444,11 @@ components:
           properties:
             self:
               $ref: '#/components/schemas/link'
+      required:
+        - title
+        - description
+        - fromRef
+        - toRef
     user:
       title: user
       type: object
@@ -2061,13 +2482,7 @@ components:
         type:
           type: string
       required:
-        - id
         - name
-        - emailAddress
-        - displayName
-        - active
-        - slug
-        - type
     userRole:
       title: userRole
       type: object
@@ -2087,6 +2502,8 @@ components:
           enum:
             - UNAPPROVED
             - APPROVED
+      required:
+        - user
     repositoryRef:
       title: repositoryRef
       type: object
@@ -2113,6 +2530,13 @@ components:
       required:
         - id
         - repository
+    pullRequestState:
+      type: string
+      title: pullRequestState
+      enum:
+        - OPEN
+        - MERGED
+        - DECLINED
   securitySchemes:
     usernamePassword:
       type: http
