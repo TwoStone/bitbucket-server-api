@@ -2378,9 +2378,14 @@ components:
       title: pullRequests
       allOf:
         - $ref: '#/components/schemas/page'
-        - type: array
-          items:
-            $ref: '#/components/schemas/pullRequest'
+        - type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: ''
+          required:
+            - values
       x-examples:
         example-1: {}
     pullRequest:
