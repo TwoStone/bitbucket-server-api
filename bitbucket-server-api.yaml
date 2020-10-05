@@ -362,9 +362,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/errors'
         '404':
           description: Not Found
           content:
@@ -1777,10 +1774,12 @@ components:
           $ref: '#/components/schemas/user'
         authorTimestamp:
           type: integer
+          format: int64
         commiter:
           $ref: '#/components/schemas/user'
         commiterTimestamp:
           type: integer
+          format: int64
         message:
           type: string
         parents:
@@ -1880,8 +1879,10 @@ components:
           type: string
         createDate:
           type: integer
+          format: int64
         updatedDate:
           type: integer
+          format: int64
         events:
           type: array
           uniqueItems: true
