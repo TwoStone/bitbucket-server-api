@@ -1,7 +1,5 @@
 openapi: 3.0.0
 tags:
-  - bitbucket
-  - client-api
   - name: projects
     description: Operations focusing on projects
   - name: repositories
