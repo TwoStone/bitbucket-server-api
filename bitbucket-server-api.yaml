@@ -2452,8 +2452,10 @@ components:
           type: boolean
         createdDate:
           type: integer
+          format: int64
         updatedDate:
           type: integer
+          format: int64
         fromRef:
           $ref: '#/components/schemas/repositoryRef'
         toRef:
