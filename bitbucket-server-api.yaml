@@ -1552,7 +1552,7 @@ components:
         isDefault:
           type: boolean
         metadata:
-          type: object
+          $ref: '#/components/schemas/branchMetadata'
       required:
         - id
         - displayId
@@ -1946,6 +1946,58 @@ components:
                 $ref: '#/components/schemas/buildStatus'
           required:
             - values
+    branchMetadata:
+      title: branchMetadata
+      type: object
+      properties:
+        'com.atlassian.bitbucket.server.bitbucket-branch:ahead-behind-metadata-provider':
+          $ref: '#/components/schemas/branchMetadataAheadBehind'
+        'com.atlassian.bitbucket.server.bitbucket-branch:latest-commit-metadata':
+          $ref: '#/components/schemas/commit'
+        'com.atlassian.bitbucket.server.bitbucket-build:build-status-metadata':
+          $ref: '#/components/schemas/branchMetadataBuildStatus'
+        'com.atlassian.bitbucket.server.bitbucket-ref-metadata:outgoing-pull-request-metadata':
+          type: object
+        'com.atlassian.bitbucket.server.bitbucket-jira:branch-list-jira-issues':
+          type: array
+          items:
+            $ref: '#/components/schemas/branchMetadataJiraIssue'
+    branchMetadataAheadBehind:
+      title: branchMetadataAheadBehind
+      type: object
+      properties:
+        ahead:
+          type: integer
+        behind:
+          type: integer
+      required:
+        - ahead
+        - behind
+    branchMetadataBuildStatus:
+      title: branchMetadataBuildStatus
+      type: object
+      properties:
+        successful:
+          type: integer
+        inProgress:
+          type: integer
+        failed:
+          type: integer
+      required:
+        - successful
+        - inProgress
+        - failed
+    branchMetadataJiraIssue:
+      title: branchMetadataJiraIssue
+      type: object
+      properties:
+        key:
+          type: string
+        url:
+          type: string
+      required:
+        - key
+        - url
   securitySchemes:
     usernamePassword:
       type: http
