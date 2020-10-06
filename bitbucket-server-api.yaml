@@ -1553,6 +1553,8 @@ components:
           pattern: '[A-Fa-f0-9]+'
         isDefault:
           type: boolean
+        metadata:
+          type: object
       required:
         - id
         - displayId
