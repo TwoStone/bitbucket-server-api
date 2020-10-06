@@ -538,12 +538,12 @@ paths:
             type: string
           in: query
           name: name
-          description: "(optional) if specified, this will limit the resulting repository list to ones whose name matches this parameter's value. The match will be done case-insensitive and any leading and/or trailing whitespace characters on the name parameter will be stripped."
+          description: '(optional) if specified, this will limit the resulting repository list to ones whose name matches this parameter''s value. The match will be done case-insensitive and any leading and/or trailing whitespace characters on the name parameter will be stripped.'
         - schema:
             type: string
           in: query
           name: projectname
-          description: "(optional) if specified, this will limit the resulting repository list to ones whose project's name matches this parameter's value. The match will be done case-insensitive and any leading and/or trailing whitespace characters on the projectname parameter will be stripped."
+          description: '(optional) if specified, this will limit the resulting repository list to ones whose project''s name matches this parameter''s value. The match will be done case-insensitive and any leading and/or trailing whitespace characters on the projectname parameter will be stripped.'
         - schema:
             type: string
             enum:
@@ -552,7 +552,7 @@ paths:
               - REPO_ADMIN
           in: query
           name: permission
-          description: "(optional) if specified, it must be a valid repository permission level name and will limit the resulting repository list to ones that the requesting user has the specified permission level to. If not specified, the default implicit 'read' permission level will be assumed. The currently supported explicit permission values are REPO_READ, REPO_WRITE and REPO_ADMIN."
+          description: '(optional) if specified, it must be a valid repository permission level name and will limit the resulting repository list to ones that the requesting user has the specified permission level to. If not specified, the default implicit ''read'' permission level will be assumed. The currently supported explicit permission values are REPO_READ, REPO_WRITE and REPO_ADMIN.'
         - schema:
             type: string
             enum:
@@ -735,7 +735,7 @@ paths:
         required: true
       - schema:
           type: string
-          pattern: '.*'
+          pattern: .*
         name: path
         in: path
         required: true
@@ -1342,14 +1342,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errors'
-      description: |+
+      description: |
         This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
 
         Update an existing webhook.
 
         The authenticated user must have REPO_ADMIN permission for the specified repository to call this resource.
-
-
       requestBody:
         content:
           application/json:
