@@ -1734,14 +1734,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/errors'
       operationId: get-rest-api-1.0-projects-projectKey-repos-repositorySlug-pull-requests-pullRequestId-.patch
-      description: |+
+      description: |
         This API can also be invoked via a user-centric URL when addressing repositories in personal projects.
 
         Streams a patch representing a pull request.
 
         The authenticated user must have REPO_READ permission for the repository that this pull request targets to call this resource.
-
-
   '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/default-branch':
     parameters:
       - schema:
@@ -2377,7 +2375,7 @@ components:
         'com.atlassian.bitbucket.server.bitbucket-build:build-status-metadata':
           $ref: '#/components/schemas/branchMetadataBuildStatus'
         'com.atlassian.bitbucket.server.bitbucket-ref-metadata:outgoing-pull-request-metadata':
-          type: object
+          $ref: '#/components/schemas/branchMetadataOutgoingPullRequest'
         'com.atlassian.bitbucket.server.bitbucket-jira:branch-list-jira-issues':
           type: array
           items:
@@ -2608,6 +2606,14 @@ components:
         - id
         - displayId
         - type
+    branchMetadataOutgoingPullRequest:
+      title: branchMetadataOutgoingPullRequest
+      type: object
+      properties:
+        pullRequest:
+          $ref: ''
+      required:
+        - pullRequest
   securitySchemes:
     usernamePassword:
       type: http
