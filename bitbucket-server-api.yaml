@@ -1784,6 +1784,84 @@ paths:
         The authenticated user must have REPO_READ permission for the specified repository to call this resource.
       tags:
         - repositories
+  '/rest/branch-utils/1.0/projects/{projectKey}/repos/{repositorySlug}/branches':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    post:
+      summary: Delete branch
+      operationId: createBranch
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/branch'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        Creates a branch in the specified repository.
+
+        The authenticated user must have an effective REPO_WRITE permission to call this resource. If branch permissions are set up in the repository, the authenticated user must also have access to the branch name that is to be created.
+      tags:
+        - branches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createBranch'
+    delete:
+      summary: ''
+      operationId: deleteBranch
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      description: |-
+        Deletes a branch in the specified repository.
+
+        If the branch does not exist, this operation will not raise an error. In other words after calling this resource and receiving a 204 response the branch provided in the request is guaranteed to not exist in the specified repository any more, regardless of its existence beforehand.
+
+        The optional 'endPoint' parameter of the request may contain a commit ID that the provided ref name is expected to point to. Should the ref point to a different commit ID, a 400 response will be returned with appropriate error details.
+
+        The authenticated user must have an effective REPO_WRITE permission to call this resource. If branch permissions are set up in the repository, the authenticated user must also have access to the branch name that is to be deleted.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteBranch'
+      tags:
+        - branches
 components:
   schemas:
     page:
@@ -2616,6 +2694,37 @@ components:
           $ref: '#/components/schemas/pullRequest'
       required:
         - pullRequest
+    createBranch:
+      title: createBranch
+      type: object
+      properties:
+        name:
+          type: string
+        startPoint:
+          type: string
+        message:
+          type: string
+      required:
+        - name
+        - startPoint
+    deleteBranch:
+      title: deleteBranch
+      type: object
+      x-examples:
+        example-1:
+          name: refs/heads/my-branch
+          dryRun: false
+          endPoint: master
+      properties:
+        name:
+          type: string
+        dryRun:
+          type: boolean
+        endPoint:
+          type: string
+      required:
+        - name
+        - dryRun
   securitySchemes:
     usernamePassword:
       type: http
