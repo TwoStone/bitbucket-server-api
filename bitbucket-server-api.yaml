@@ -2688,12 +2688,24 @@ components:
         - type
     branchMetadataOutgoingPullRequest:
       title: branchMetadataOutgoingPullRequest
+      oneOf:
+        - properties:
+            pullRequest:
+              $ref: '#/components/schemas/pullRequest'
+          required:
+            - pullRequest
+        - properties:
+            open:
+              type: integer
+            merged:
+              type: integer
+            declined:
+              type: integer
+          required:
+            - open
+            - merged
+            - declined
       type: object
-      properties:
-        pullRequest:
-          $ref: '#/components/schemas/pullRequest'
-      required:
-        - pullRequest
     createBranch:
       title: createBranch
       type: object
