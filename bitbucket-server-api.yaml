@@ -2554,7 +2554,9 @@ components:
           type: object
           properties:
             self:
-              $ref: '#/components/schemas/link'
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
       required:
         - title
         - description
