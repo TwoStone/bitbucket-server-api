@@ -1862,6 +1862,64 @@ paths:
               $ref: '#/components/schemas/deleteBranch'
       tags:
         - branches
+  '/rest/default-reviewers/1.0/projects/{projectKey}/repos/{repositorySlug}/reviewers':
+    parameters:
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: repositorySlug
+        in: path
+        required: true
+    get:
+      summary: Get default reviewers
+      tags:
+        - pullRequests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
+      operationId: getDefaultReviewers
+      description: Return a set of users who are required reviewers for pull requests created from the given source repository and ref to the given target ref in this repository.
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: sourceRepoId
+          required: true
+          description: The ID of the repository in which the source ref exists
+        - schema:
+            type: integer
+          in: query
+          name: targetRepoId
+          required: true
+          description: The ID of the repository in which the target ref exists
+        - schema:
+            type: string
+          in: query
+          name: sourceRefId
+          required: true
+          description: The ID of the source ref
+        - schema:
+            type: string
+          in: query
+          name: targetRefId
+          description: |
+            The ID of the target ref
 components:
   schemas:
     page:
